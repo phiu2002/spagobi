@@ -1,0 +1,30 @@
+version: '2'
+services:
+  spagobiserver:
+    image: spagobi-service
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    environment:
+      MYSQL_WAIT: 'true'
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: dev
+      MYSQL_MAXPOOLSIZE: 20
+      SPAGOBI_ENGINES: QbeEngine,TalendEngine
+    volumes:
+     - spagobi-resources:/opt/jetty/spagobi/resources:rw
+  mysql:
+    image: mysql:5.7
+    expose:
+      - "3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: dev
+      MYSQL_DATABASE: spagobi
+    volumes:
+      - ./data/mysql:/var/lib/mysql:rw
+      - ./MYSQL:/docker-entrypoint-initdb.d/:ro
+volumes:
+  spagobi-resources:
